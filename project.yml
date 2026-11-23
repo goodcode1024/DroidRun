@@ -1,0 +1,21 @@
+name: DroidRun
+options:
+  bundleIdPrefix: com.goodcode1024
+  deploymentTarget:
+    iOS: "17.0"
+  createIntermediateGroups: true
+
+targets:
+  DroidRun:
+    type: application
+    platform: iOS
+    sources:
+      - DroidRun
+    settings:
+      base:
+        INFOPLIST_FILE: DroidRun/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.goodcode1024.droidrun
+        SWIFT_VERSION: "5.9"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGNING_ALLOWED: "NO"
+        GENERATE_INFOPLIST_FILE: "NO"
