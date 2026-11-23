@@ -20,15 +20,25 @@ struct LauncherView: View {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: 20) {
                             ForEach(viewModel.installedApps) { app in
-                                Button {
-                                    Task { await viewModel.launch(app) }
+                                NavigationLink {
+                                    AppDetailView(viewModel: viewModel, app: app)
                                 } label: {
                                     VStack(spacing: 6) {
-                                        icon(app)
+                                        AppIcon(data: app.iconData)
                                         Text(app.label).font(.caption).lineLimit(1)
                                     }
                                 }
                                 .buttonStyle(.plain)
+                                .contextMenu {
+                                    Button { Task { await viewModel.launch(app) } } label: {
+                                        Label("打开", systemImage: "play")
+                                    }
+                                    Button(role: .destructive) {
+                                        Task { await viewModel.uninstall(app) }
+                                    } label: {
+                                        Label("卸载", systemImage: "trash")
+                                    }
+                                }
                             }
                         }
                         .padding()
@@ -49,20 +59,6 @@ struct LauncherView: View {
                 }
             }
             .task { await viewModel.refreshInstalledApps() }
-        }
-    }
-
-    @ViewBuilder
-    private func icon(_ app: InstalledApp) -> some View {
-        if let data = app.iconData, let ui = UIImage(data: data) {
-            Image(uiImage: ui)
-                .resizable()
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-        } else {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.quaternary)
-                .frame(width: 56, height: 56)
         }
     }
 }

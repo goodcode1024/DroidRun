@@ -4,6 +4,7 @@ struct SessionView: View {
     @Bindable var viewModel: VMSessionViewModel
     @State private var showLauncher = false
     @State private var showSettings = false
+    @State private var showSnapshots = false
 
     var body: some View {
         ZStack {
@@ -18,8 +19,26 @@ struct SessionView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button { showLauncher = true } label: { Label("应用", systemImage: "square.grid.2x2") }
+                    Button { showSnapshots = true } label: { Label("快照", systemImage: "clock.arrow.circlepath") }
                     Button { showSettings = true } label: { Label("设置", systemImage: "gearshape") }
-                    Button { Task { await viewModel.pause() } } label: { Label("暂停", systemImage: "pause") }
+                    Divider()
+                    if viewModel.state == .running {
+                        Button { Task { await viewModel.pause() } } label: { Label("暂停", systemImage: "pause") }
+                    } else if viewModel.state == .paused {
+                        Button { Task { await viewModel.resume() } } label: { Label("继续", systemImage: "play") }
+                    }
+                    Button { Task { await viewModel.toggleRotationLock() } } label: {
+                        Label(
+                            viewModel.rotationLocked ? "解锁旋转" : "锁定旋转",
+                            systemImage: viewModel.rotationLocked ? "lock.rotation" : "rotate.right"
+                        )
+                    }
+                    Divider()
+                    Button(role: .destructive) {
+                        Task { await viewModel.stop() }
+                    } label: {
+                        Label("停止", systemImage: "stop.fill")
+                    }
                 } label: {
                     Image(systemName: "ellipsis.circle")
                 }
@@ -27,19 +46,17 @@ struct SessionView: View {
         }
         .sheet(isPresented: $showLauncher) { LauncherView(viewModel: viewModel) }
         .sheet(isPresented: $showSettings) { SettingsView(viewModel: viewModel) }
+        .sheet(isPresented: $showSnapshots) { SnapshotView(viewModel: viewModel) }
     }
 
     private var statsOverlay: some View {
         VStack {
             Spacer()
-            HStack(spacing: 12) {
-                Text(String(format: "CPU %.0f%%", viewModel.stats.cpuPercent))
-                Text(String(format: "%.0f fps", viewModel.stats.fps))
-                Text(String(format: "%.1fG/%.1fG", viewModel.stats.memoryUsedGB, viewModel.stats.memoryTotalGB))
+            HStack(spacing: 8) {
+                StatPill(text: String(format: "CPU %.0f%%", viewModel.stats.cpuPercent))
+                StatPill(text: String(format: "%.0f fps", viewModel.stats.fps))
+                StatPill(text: String(format: "%.1fG/%.1fG", viewModel.stats.memoryUsedGB, viewModel.stats.memoryTotalGB))
             }
-            .font(.caption2.monospacedDigit())
-            .padding(.horizontal, 12).padding(.vertical, 6)
-            .background(.ultraThinMaterial, in: Capsule())
             .padding(.bottom, 12)
         }
     }

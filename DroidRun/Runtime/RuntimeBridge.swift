@@ -20,14 +20,22 @@ protocol RuntimeBridge: Sendable {
     func resume() async throws
     /// 创建快照。
     func takeSnapshot(named name: String) async throws -> VMSnapshot
+    /// 列出快照。
+    func listSnapshots() async throws -> [VMSnapshot]
     /// 恢复快照。
     func restoreSnapshot(_ snapshot: VMSnapshot) async throws
+    /// 删除快照。
+    func deleteSnapshot(_ snapshot: VMSnapshot) async throws
     /// 安装 APK。
     func installAPK(at url: URL) async throws
     /// 启动某个已安装应用。
     func launchApp(packageName: String) async throws
+    /// 卸载某个已安装应用。
+    func uninstallApp(packageName: String) async throws
     /// 列出已安装应用。
     func listInstalledApps() async throws -> [InstalledApp]
+    /// 锁定/解锁屏幕旋转。
+    func setRotationLock(_ locked: Bool) async throws
     /// 实时性能指标流。
     func statsStream() -> AsyncStream<PerformanceStats>
 }

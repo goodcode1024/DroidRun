@@ -23,28 +23,31 @@ struct KernariumAdapter: RuntimeBridge {
     }
 
     func stop() async throws {
-        // TODO(集成): 调用 runtime 的 guest 停止/销毁。
         throw RuntimeError.notIntegrated("stop")
     }
 
     func pause() async throws {
-        // TODO(集成): 挂起 guest。
         throw RuntimeError.notIntegrated("pause")
     }
 
     func resume() async throws {
-        // TODO(集成): 恢复 guest。
         throw RuntimeError.notIntegrated("resume")
     }
 
     func takeSnapshot(named name: String) async throws -> VMSnapshot {
-        // TODO(集成): 保存 guest 快照。
         throw RuntimeError.notIntegrated("takeSnapshot")
     }
 
+    func listSnapshots() async throws -> [VMSnapshot] {
+        throw RuntimeError.notIntegrated("listSnapshots")
+    }
+
     func restoreSnapshot(_ snapshot: VMSnapshot) async throws {
-        // TODO(集成): 恢复 guest 快照。
         throw RuntimeError.notIntegrated("restoreSnapshot")
+    }
+
+    func deleteSnapshot(_ snapshot: VMSnapshot) async throws {
+        throw RuntimeError.notIntegrated("deleteSnapshot")
     }
 
     func installAPK(at url: URL) async throws {
@@ -57,9 +60,19 @@ struct KernariumAdapter: RuntimeBridge {
         throw RuntimeError.notIntegrated("launchApp")
     }
 
+    func uninstallApp(packageName: String) async throws {
+        // TODO(集成): `pm uninstall <pkg>`。
+        throw RuntimeError.notIntegrated("uninstallApp")
+    }
+
     func listInstalledApps() async throws -> [InstalledApp] {
         // TODO(集成): `pm list packages -3` + 图标提取。
         throw RuntimeError.notIntegrated("listInstalledApps")
+    }
+
+    func setRotationLock(_ locked: Bool) async throws {
+        // TODO(集成): 通过 motion 连接或 guest 设置锁定旋转。
+        throw RuntimeError.notIntegrated("setRotationLock")
     }
 
     func statsStream() -> AsyncStream<PerformanceStats> {
